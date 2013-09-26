@@ -1,7 +1,6 @@
-
-### Case Study 2
-### Ian Daniher
-### 09/26/13
+#### Case Study 2
+#### Ian Daniher
+#### 09/26/13
 
 ## Root Finding Methods
 
