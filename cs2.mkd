@@ -19,4 +19,6 @@ Each function returns the approximate root, the number of iterations, and the to
 
 > def iqi(f, xs, tol = 0.1, nMax = 100):
 
-![Convergence Vs. Tolerance for all algorithms](/cs2/cs2f1.png "Convergence vs. Tolerance")
+![Convergence Vs. Tolerance for all algorithms](/cs2/cs2f1.png "Iterations vs. Tolerance")
+
+![Runtime Vs. Tolerance for all algorithms](/cs2/cs2f2.png "Runtime vs. Tolerance")
