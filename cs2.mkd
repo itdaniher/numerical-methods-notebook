@@ -1,0 +1,22 @@
+
+### Case Study 2
+### Ian Daniher
+### 09/26/13
+
+## Root Finding Methods
+
+This lab sought to explore mechanisms for identifying zeros of specified functions. 
+
+Four functions were written, with a isomorphic API, exposing midpoint root finding, newton's method, linear interpolation, and inverse quadratic interpolation. Each function written accepts a function accpeting one argument, implementation-specific initial state information, a tolerance, and a maximum number of iterations.
+
+Each function returns the approximate root, the number of iterations, and the total runtime.
+
+> def midpoint(f, a, b, tol = 0.1, nMax = 100):
+
+> def newtons(f, dfdt, xi, tol = 0.1, nMax = 100):
+
+> def lerp(f, a, b, tol = 0.1, nMax = 100):
+
+> def iqi(f, xs, tol = 0.1, nMax = 100):
+
+![Convergence Vs. Tolerance for all algorithms](/cs2/cs2f1.png "Convergence vs. Tolerance")
