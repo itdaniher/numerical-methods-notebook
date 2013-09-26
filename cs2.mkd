@@ -13,11 +13,56 @@ Each function returns the approximate root, the number of iterations, and the to
 
 > def midpoint(f, a, b, tol = 0.1, nMax = 100):
 
+The midpoint method uses a modified binary search to identify the zeros of a function. It halves the search space successively until the identified midpoint is within the specified tolerance of the zero. It converges reliably to a root given appropriate initial boundaries.
+
+The basic algorithm for the midpoint method can be summarized as follows:
+
+> while (abs(f(c)) > tol):
+> 	c = (a+b)*0.5
+> 	if sign(f(c)) == sign(f(a)):
+> 		a = c
+> 	else:
+> 		b = c
+
+Comparing the sign of the function evaluated at the midpoint with the function evaluated at the other bounds determines the interval of the zero, for most functions. This search uses a very small amount of information about the function to identify the zero, requires a higher interation count to achieve a specified precision, but is easy to use.
+
 > def newtons(f, dfdt, xi, tol = 0.1, nMax = 100):
+
+Newton's method accepts a pair of functions, one representing the function to be evaluated, and the other representing the derivative of the function to be evaluated. The slope of the function is used to provide successive estimations of the zero, solving the equation first order equation of the line, "y = m\*x + b"
+
+The basic algorithm for newton's method can be summarized as follows:
+
+> while (abs(f(c)) > tol):
+> 	x = x - f(x)/dfdt(x)
+
+This algorithm uses additional knowledge about the behavior of the function to provide successively better guesses for the root. This algorithm breaks if the derivative of the function is zero for any x value, and as such, is sensitive to both the nature of the equations at hand, and the initial guess.
 
 > def lerp(f, a, b, tol = 0.1, nMax = 100):
 
+Linear interpolation approximates newton's method by a first order approximation of the derivative taken at a specified pair of points.
+
+The algorithm can be summarized as follows:
+
+> while (abs(f(c)) > tol):
+> 	c = b - f(b)\*(b-a)/(f(b) - f(a))
+> 	if sign(f(c)) == sign(f(a)):
+> 		a = c
+> 	else:
+> 		b = c
+
+The approximation of the derivative reduces the accuracy of the successive estimations, requiring considerably more iterations, but as long as f(b) != f(a) and a != b, the algorithm converges to the root with a reasonable number of iterations.
+
 > def iqi(f, xs, tol = 0.1, nMax = 100):
+
+Inverse quadratic interpolation is an extension of linear interpolation, using a second order fit to an arbitrary set of values of the function at an arbitrary set of points. A parabola fitting can be solved for an estimated zero, and the estimated zero can be used to update the set of values used to make the fit, successively improving the guess.
+
+The algorithm can be summarized as follows:
+
+> while (abs(f(xs[0])) > tol):
+> 	p = polyfit(xs, f(xs), 3)
+> 	xs.shift(polyroots(p))
+
+The successive fitting and numerical solving carries a heavy temporal overhead, but converges remarkably well for an approach making use of only the function and an initial set of guesses.
 
 ![Convergence Vs. Tolerance for all algorithms](/cs2/cs2f1.png "Iterations vs. Tolerance")
 
