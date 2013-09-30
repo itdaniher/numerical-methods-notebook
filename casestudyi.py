@@ -22,15 +22,17 @@ def feuler(dfdt, x0, v0, tn, c):
 	t = 0
 	m = c['m']
 	dt = c['dt']
-	xo = []
 	to = []
+	xo = []
+	vo = []
 	while t < tn:
 		xo.append(x)
 		to.append(t)
+		vo.append(v)
 		v += dfdt(x,v,dt)*dt
 		x += v*dt
 		t += dt
-	return to, xo
+	return to, xo, vo
 
 # modified euler numerical integration - trapezoidal approximation
 def meuler(dfdt, x0, v0, tn, c):
@@ -43,13 +45,14 @@ def meuler(dfdt, x0, v0, tn, c):
 	x = x0
 	v = v0
 	t = 0
-	m = s("m")
-	dt = s("dt")
+	dt = c['dt']
 	xo = []
 	to = []
+	vo = []
 	while t < tn:
 		xo.append(x)
 		to.append(t)
+		vo.append(v)
 		# get left and right estimates, average
 		vi = dfdt(x,v,dt)*dt
 		vf = dfdt(x,vi,dt)*dt
@@ -57,11 +60,11 @@ def meuler(dfdt, x0, v0, tn, c):
 		# calculate error constant
 		er = e(2.0*(vf-vi)/dt**2, c)
 		# evaluate
-		x += e(v*dt, c)
+		x += v*dt
 		# increment time
-		t += e(dt, c)
+		t += dt
 		#c["dt"] *= e(sympy.sqrt(1.01/(dt*sympy.Abs(vi.norm()-v.norm()))), c)
-	return to, xo
+	return to, xo, vo
 
 if __name__ == "__main__":
 	# constant terms
@@ -88,9 +91,14 @@ if __name__ == "__main__":
 	v0 = M([45.*np.cos(np.deg2rad(35.)*2), 45.*np.sin(np.deg2rad(35.)*2)])
 	x0 = M([0, 1])
 	c['dt'] = 0.1
-	plt.semilogy(*rk45.rk4(dfdt, x0, v0, tf, c), marker='o', label='rk45')
-	plt.semilogy(*meuler(dfdt, x0, v0, tf, c), marker='.', label='meuler')
-	plt.semilogy(*feuler(dfdt, x0, v0, tf, c), marker='v', label='feuler')
+	rkres =rk45.rk4(dfdt, x0, v0, tf, c)
+	print 'rk45 complete'
+	meres = meuler(dfdt, x0, v0, tf, c)
+	print 'modeuler complete'
+	feres = feuler(dfdt, x0, v0, tf, c)
+	print 'fwdeuler complete'
+	plt.plot(rkres[0], rkres[2], marker='o', label='rk45')
+	plt.plot(meres[0], meres[2], marker='.', label='meuler')
+	plt.plot(feres[0], feres[2], marker='v', label='feuler')
 	plt.legend(loc='best')
 	plt.show()
-

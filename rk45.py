@@ -2,10 +2,12 @@ def rk4(a, x, v, tn, c = {'dt': 1./40}):
 	dt = c['dt']
 	xo = []
 	to = []
+	vo = []
 	t = 0
 	while t < tn:
 		xo.append(x)
 		to.append(t)
+		vo.append(v)
 		x1 = x
 		v1 = v
 		a1 = a(x1, v1, 0)
@@ -24,12 +26,9 @@ def rk4(a, x, v, tn, c = {'dt': 1./40}):
 		x = x + (dt/6.0)*(v1 + 2*v2 + 2*v3 + v4)
 		v = v + (dt/6.0)*(a1 + 2*a2 + 2*a3 + a4)
 		t += dt
-	return to, xo
+	return to, xo, vo
 
-def accel(x, v, dt):
-	"""Determines acceleration from current position,
-	velocity, and timestep. This particular acceleration
-	function models a spring."""
+def spring(x, v, dt):
 	stiffness = 1
-	damping = +0.005
-	return -stiffness*x - damping*v
+	damping = -0.005
+	return -stiffness*x + damping*v
