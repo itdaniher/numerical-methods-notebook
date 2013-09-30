@@ -9,7 +9,14 @@ from sympy import Matrix as M
 
 e = lambda x, c: x.subs(c.items()).evalf()
 
-def feuler(x0, v0, tn, f, c):
+
+# forward euler numerical integration
+def feuler(dfdt, x0, v0, tn, c):
+	""" dfdt is a function accepting x, v, and dt, returning a floating point number.
+	x0 is the initial position.
+	v0 is the initial velocity.
+	tn is the final time.
+	c is a dictionary of constants."""
 	x = x0
 	v = v0
 	t = 0
@@ -20,12 +27,18 @@ def feuler(x0, v0, tn, f, c):
 	while t < tn:
 		xo.append(x)
 		to.append(t)
-		v += e(f(x,v,dt)/m*dt, c)
+		v += e(dfdt(x,v,dt)/m*dt, c)
 		x += e(v*dt, c)
 		t += e(dt, c)
 	return to, xo
 
-def meuler(x0, v0, tn, f, c):
+# modified euler numerical integration - trapezoidal approximation
+def meuler(dfdt, x0, v0, tn, c):
+	""" dfdt is a function accepting x, v, and dt, returning a floating point number.
+	x0 is the initial position.
+	v0 is the initial velocity.
+	tn is the final time.
+	c is a dictionary of constants."""
 	x = x0
 	v = v0
 	t = 0
@@ -37,8 +50,8 @@ def meuler(x0, v0, tn, f, c):
 		xo.append(x)
 		to.append(t)
 		# get left and right estimates, average
-		vi = e(f(x,v,dt)/m*dt, c)
-		vf = e(f(x,vi,dt)/m*dt, c)
+		vi = e(dfdt(x,v,dt)/m*dt, c)
+		vf = e(dfdt(x,vi,dt)/m*dt, c)
 		v += 0.5*(vi+vf)
 		# calculate error constant
 		er = e(2.0*(vf-vi)/dt**2, c)
@@ -54,11 +67,11 @@ if __name__ == "__main__":
 	tf = sympy.solve(1+45*np.sin(35*np.pi*2/180)*t+0.5*(-9.8)*t**2,t)[1]
 	# distance without drag
 	xf = e(45*np.cos(35*np.pi*2/180)*t, {"t": tf})
-	print xf
+	print "distance without drag:",  xf
 
 	# drag equation
 	f0 = lambda x, v, dt: M([0, s("m*g")])
-	f = lambda x, v, dt: M([0, s("m*g")]) +(s("-1/2*p*Cd*A")*v.norm()**2*v.normalized())
+	dfdt = lambda x, v, dt: M([0, s("m*g")]) +(s("-1/2*p*Cd*A")*v.norm()**2*v.normalized())
 	# initial velocity matrix
 	v0 = M([45*np.cos(35*(2*np.pi)/180), # m/s
 		45*np.sin(35*(2*np.pi)/180)]) # m/s
@@ -76,20 +89,22 @@ if __name__ == "__main__":
 	}
 
 	plt.figure()
-	ts = np.logspace(-3, 0.1, 8)[::-1]
+	ts = np.logspace(-2, 0.1, 4)[::-1]
 	ferr = []
 	for dt in ts:
 		c["dt"] = dt
-		err = np.abs(feuler(x0, v0, tf, f, c)[1][-1].norm())
+		err = np.abs(feuler(dfdt, x0, v0, tf, c)[1][-1].norm())
 		ferr.append(err)
+		print "ferr", err
 		#plt.plot(fwd[0], map(lambda x: x[1], fwd[1]), "r-o", label="fwd, "+str(dt)[0:5])
 	plt.loglog(ts, ferr, "-o")#, label="fwd, "+str(dt)[0:5])
 	merr = []
 	for dt in ts:
 		c["dt"] = dt
-		err = np.abs(meuler(x0, v0, tf, f, c)[1][-1].norm())
+		err = np.abs(meuler(dfdt, x0, v0, tf, c)[1][-1].norm())
 		#err = np.abs(meuler(x0, v0, tf, f, c)[1][-1].norm()-xf)/xf
 		merr.append(err)
+		print "merr", err
 		#plt.plot(mod[0], map(lambda x: x[1], mod[1]), "b-v", label="mod, "+str(dt)[0:5])
 	plt.loglog(ts, merr, "-v")#, label="mod, "+str(dt)[0:5])
 	plt.xlabel("time (s)")
