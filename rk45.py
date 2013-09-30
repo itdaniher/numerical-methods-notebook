@@ -1,0 +1,35 @@
+def rk4(a, x, v, tn, c = {'dt': 1./40}):
+	dt = c['dt']
+	xo = []
+	to = []
+	t = 0
+	while t < tn:
+		xo.append(x)
+		to.append(t)
+		x1 = x
+		v1 = v
+		a1 = a(x1, v1, 0)
+	
+		x2 = x + 0.5*v1*dt
+		v2 = v + 0.5*a1*dt
+		a2 = a(x2, v2, dt/2.0)
+
+		x3 = x + 0.5*v2*dt
+		v3 = v + 0.5*a2*dt
+		a3 = a(x3, v3, dt/2.0)
+		x4 = x + v3*dt
+		v4 = v + a3*dt
+		a4 = a(x4, v4, dt)
+	
+		x = x + (dt/6.0)*(v1 + 2*v2 + 2*v3 + v4)
+		v = v + (dt/6.0)*(a1 + 2*a2 + 2*a3 + a4)
+		t += dt
+	return to, xo
+
+def accel(x, v, dt):
+	"""Determines acceleration from current position,
+	velocity, and timestep. This particular acceleration
+	function models a spring."""
+	stiffness = 1
+	damping = +0.005
+	return -stiffness*x - damping*v

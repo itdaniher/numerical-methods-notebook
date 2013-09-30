@@ -1,6 +1,7 @@
 import numpy as np
 import sympy
-import copy
+import rk45
+
 from matplotlib import pyplot as plt
 
 from sympy.abc import t
@@ -8,7 +9,6 @@ from sympy import sympify as s
 from sympy import Matrix as M
 
 e = lambda x, c: x.subs(c.items()).evalf()
-
 
 # forward euler numerical integration
 def feuler(dfdt, x0, v0, tn, c):
@@ -20,21 +20,22 @@ def feuler(dfdt, x0, v0, tn, c):
 	x = x0
 	v = v0
 	t = 0
-	m = s("m")
-	dt = s("dt")
+	m = c['m']
+	dt = c['dt']
 	xo = []
 	to = []
 	while t < tn:
 		xo.append(x)
 		to.append(t)
-		v += e(dfdt(x,v,dt)/m*dt, c)
-		x += e(v*dt, c)
-		t += e(dt, c)
+		v += dfdt(x,v,dt)*dt
+		x += v*dt
+		t += dt
 	return to, xo
 
 # modified euler numerical integration - trapezoidal approximation
 def meuler(dfdt, x0, v0, tn, c):
-	""" dfdt is a function accepting x, v, and dt, returning a floating point number.
+	""" dfdt is a function accepting x, v, and dt,
+		returning either a floating point number or a matrix of floating point numbers.
 	x0 is the initial position.
 	v0 is the initial velocity.
 	tn is the final time.
@@ -50,8 +51,8 @@ def meuler(dfdt, x0, v0, tn, c):
 		xo.append(x)
 		to.append(t)
 		# get left and right estimates, average
-		vi = e(dfdt(x,v,dt)/m*dt, c)
-		vf = e(dfdt(x,vi,dt)/m*dt, c)
+		vi = dfdt(x,v,dt)*dt
+		vf = dfdt(x,vi,dt)*dt
 		v += 0.5*(vi+vf)
 		# calculate error constant
 		er = e(2.0*(vf-vi)/dt**2, c)
@@ -63,21 +64,6 @@ def meuler(dfdt, x0, v0, tn, c):
 	return to, xo
 
 if __name__ == "__main__":
-	# time without drag
-	tf = sympy.solve(1+45*np.sin(35*np.pi*2/180)*t+0.5*(-9.8)*t**2,t)[1]
-	# distance without drag
-	xf = e(45*np.cos(35*np.pi*2/180)*t, {"t": tf})
-	print "distance without drag:",  xf
-
-	# drag equation
-	f0 = lambda x, v, dt: M([0, s("m*g")])
-	dfdt = lambda x, v, dt: M([0, s("m*g")]) +(s("-1/2*p*Cd*A")*v.norm()**2*v.normalized())
-	# initial velocity matrix
-	v0 = M([45*np.cos(35*(2*np.pi)/180), # m/s
-		45*np.sin(35*(2*np.pi)/180)]) # m/s
-
-	x0 = M([0, 1])
-
 	# constant terms
 	c = {
 		"Cd": 0.3, # unitless
@@ -85,31 +71,26 @@ if __name__ == "__main__":
 		"A": 0.0042, # m**2
 		"m": 0.145,# kg
 		"g": -9.8, # m/s**2
-		"dt": .01 # s
 	}
 
-	plt.figure()
-	ts = np.logspace(-2, 0.1, 4)[::-1]
-	ferr = []
-	for dt in ts:
-		c["dt"] = dt
-		err = np.abs(feuler(dfdt, x0, v0, tf, c)[1][-1].norm())
-		ferr.append(err)
-		print "ferr", err
-		#plt.plot(fwd[0], map(lambda x: x[1], fwd[1]), "r-o", label="fwd, "+str(dt)[0:5])
-	plt.loglog(ts, ferr, "-o")#, label="fwd, "+str(dt)[0:5])
-	merr = []
-	for dt in ts:
-		c["dt"] = dt
-		err = np.abs(meuler(dfdt, x0, v0, tf, c)[1][-1].norm())
-		#err = np.abs(meuler(x0, v0, tf, f, c)[1][-1].norm()-xf)/xf
-		merr.append(err)
-		print "merr", err
-		#plt.plot(mod[0], map(lambda x: x[1], mod[1]), "b-v", label="mod, "+str(dt)[0:5])
-	plt.loglog(ts, merr, "-v")#, label="mod, "+str(dt)[0:5])
-	plt.xlabel("time (s)")
-	plt.ylabel("error")
-	plt.title("Error for Heun and Euler integration for varying timesteps - with drag")
-	plt.legend(loc="best")
+	# time without drag
+	tf = sympy.solve(1+45*np.sin(np.deg2rad(35)*2)*t+0.5*(-9.8)*t**2,t)[1]
+	# distance without drag
+	xf = e(45*np.cos(np.deg2rad(35.)*2)*t, {"t": tf})
+	print "distance without drag:",  xf
+	print "time without drag:",  tf
+
+	# drag equation
+	dfdt = lambda x, v, dt: e(M([0, s("g")]) + (s("-1/2*p*Cd*A")*v.norm()**2*v.normalized()), c)
+	v = M(["vx", "vy"])
+	print "acceleration:", e(M([0, s("g")]) + (s("-1/2*p*Cd*A")*v.norm()**2*v.normalized()), c)
+	# initial velocity matrix
+	v0 = M([45.*np.cos(np.deg2rad(35.)*2), 45.*np.sin(np.deg2rad(35.)*2)])
+	x0 = M([0, 1])
+	c['dt'] = 0.1
+	plt.semilogy(*rk45.rk4(dfdt, x0, v0, tf, c), marker='o', label='rk45')
+	plt.semilogy(*meuler(dfdt, x0, v0, tf, c), marker='.', label='meuler')
+	plt.semilogy(*feuler(dfdt, x0, v0, tf, c), marker='v', label='feuler')
+	plt.legend(loc='best')
 	plt.show()
 
