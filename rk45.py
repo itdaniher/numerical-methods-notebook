@@ -1,10 +1,10 @@
-def rk4(a, x, v, tn, c = {'dt': 1./40}):
+def rk4(a, x, v, ec, c = {'dt': 1./40}):
 	dt = c['dt']
 	xo = []
 	to = []
 	vo = []
 	t = 0
-	while t < tn:
+	while ec(t, x, v):
 		xo.append(x)
 		to.append(t)
 		vo.append(v)

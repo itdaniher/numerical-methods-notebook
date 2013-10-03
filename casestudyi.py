@@ -11,7 +11,7 @@ from sympy import Matrix as M
 e = lambda x, c: x.subs(c.items()).evalf()
 
 # forward euler numerical integration
-def feuler(dfdt, x0, v0, tn, c):
+def feuler(dfdt, x0, v0, ec, c):
 	""" dfdt is a function accepting x, v, and dt, returning a floating point number.
 	x0 is the initial position.
 	v0 is the initial velocity.
@@ -25,7 +25,7 @@ def feuler(dfdt, x0, v0, tn, c):
 	to = []
 	xo = []
 	vo = []
-	while t < tn:
+	while ec(t, x, v):
 		xo.append(x)
 		to.append(t)
 		vo.append(v)
@@ -35,7 +35,7 @@ def feuler(dfdt, x0, v0, tn, c):
 	return to, xo, vo
 
 # modified euler numerical integration - trapezoidal approximation
-def meuler(dfdt, x0, v0, tn, c):
+def meuler(dfdt, x0, v0, ec, c):
 	""" dfdt is a function accepting x, v, and dt,
 		returning either a floating point number or a matrix of floating point numbers.
 	x0 is the initial position.
@@ -49,7 +49,7 @@ def meuler(dfdt, x0, v0, tn, c):
 	xo = []
 	to = []
 	vo = []
-	while t < tn:
+	while ec(t, x, v):
 		xo.append(x)
 		to.append(t)
 		vo.append(v)
@@ -91,11 +91,11 @@ if __name__ == "__main__":
 	v0 = M([45.*np.cos(np.deg2rad(35.)*2), 45.*np.sin(np.deg2rad(35.)*2)])
 	x0 = M([0, 1])
 	c['dt'] = 0.1
-	rkres =rk45.rk4(dfdt, x0, v0, tf, c)
+	rkres = rk45.rk4(dfdt, x0, v0, lambda t, x, v: t < tf, c)
 	print 'rk45 complete'
-	meres = meuler(dfdt, x0, v0, tf, c)
+	meres = meuler(dfdt, x0, v0, lambda t, x, v: t < tf, c)
 	print 'modeuler complete'
-	feres = feuler(dfdt, x0, v0, tf, c)
+	feres = feuler(dfdt, x0, v0, lambda t, x, v: t < tf, c)
 	print 'fwdeuler complete'
 	plt.plot(rkres[0], rkres[2], marker='o', label='rk45')
 	plt.plot(meres[0], meres[2], marker='.', label='meuler')
