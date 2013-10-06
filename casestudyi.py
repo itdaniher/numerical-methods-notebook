@@ -20,11 +20,10 @@ def feuler(dfdt, x0, v0, ec, c):
 	x = x0
 	v = v0
 	t = 0
-	m = c['m']
-	dt = c['dt']
 	to = []
 	xo = []
 	vo = []
+	dt = c['dt']
 	while ec(t, x, v):
 		xo.append(x)
 		to.append(t)
@@ -46,6 +45,7 @@ def meuler(dfdt, x0, v0, ec, c):
 	v = v0
 	t = 0
 	dt = c['dt']
+	tol = c['tol']
 	xo = []
 	to = []
 	vo = []
@@ -63,7 +63,7 @@ def meuler(dfdt, x0, v0, ec, c):
 		x += v*dt
 		# increment time
 		t += dt
-		#c["dt"] *= e(sympy.sqrt(1.01/(dt*sympy.Abs(vi.norm()-v.norm()))), c)
+		dt *= e(sympy.sqrt(tol/(dt*sympy.Abs(vi.norm()-v.norm()))), c)
 	return to, xo, vo
 
 if __name__ == "__main__":
@@ -91,14 +91,15 @@ if __name__ == "__main__":
 	v0 = M([45.*np.cos(np.deg2rad(35.)*2), 45.*np.sin(np.deg2rad(35.)*2)])
 	x0 = M([0, 1])
 	c['dt'] = 0.1
-	rkres = rk45.rk4(dfdt, x0, v0, lambda t, x, v: t < tf, c)
+	c['tol'] = 0.001*xf # 0.1% of estimated range
+	rkres = rk45.rk4(dfdt, x0, v0, lambda t, x, v: x[1] > 0, c)
 	print 'rk45 complete'
-	meres = meuler(dfdt, x0, v0, lambda t, x, v: t < tf, c)
+	meres = meuler(dfdt, x0, v0, lambda t, x, v: x[1] > 0, c)
 	print 'modeuler complete'
-	feres = feuler(dfdt, x0, v0, lambda t, x, v: t < tf, c)
+	feres = feuler(dfdt, x0, v0, lambda t, x, v: x[1] > 0, c)
 	print 'fwdeuler complete'
-	plt.plot(rkres[0], rkres[2], marker='o', label='rk45')
-	plt.plot(meres[0], meres[2], marker='.', label='meuler')
-	plt.plot(feres[0], feres[2], marker='v', label='feuler')
+	plt.plot(rkres[0], rkres[1], marker='o', label='rk45')
+	plt.plot(meres[0], meres[1], marker='.', label='meuler')
+	plt.plot(feres[0], feres[1], marker='v', label='feuler')
 	plt.legend(loc='best')
 	plt.show()
