@@ -23,7 +23,7 @@ def euler(dfdt, x, v, ec, c):
 		xo.append(x)
 		to.append(t)
 		vo.append(v)
-		v += dfdt(x,v,dt)*dt
+		v += dfdt(x,v)*dt
 		x += v*dt
 		t += dt
 	return to, xo, vo
@@ -47,8 +47,8 @@ def heun(dfdt, x, v, ec, c):
 		to.append(t)
 		vo.append(v)
 		# get left and right estimates, average
-		vi = dfdt(x,v,dt)*dt
-		vf = dfdt(x,vi,dt)*dt
+		vi = dfdt(x,v)*dt
+		vf = dfdt(x,vi)*dt
 		v += 0.5*(vi+vf)
 		# calculate error constant
 		er = e(2.0*(vf-vi)/dt**2, c)
@@ -74,18 +74,18 @@ def rk4(dfdt, x, v, ec, c = {'dt': 1./40}):
 		vo.append(v)
 		x1 = x
 		v1 = v
-		a1 = dfdt(x1, v1, 0)
+		a1 = dfdt(x1, v1)
 	
 		x2 = x + 0.5*v1*dt
 		v2 = v + 0.5*a1*dt
-		a2 = dfdt(x2, v2, dt/2.0)
+		a2 = dfdt(x2, v2)
 
 		x3 = x + 0.5*v2*dt
 		v3 = v + 0.5*a2*dt
-		a3 = dfdt(x3, v3, dt/2.0)
+		a3 = dfdt(x3, v3)
 		x4 = x + v3*dt
 		v4 = v + a3*dt
-		a4 = dfdt(x4, v4, dt)
+		a4 = dfdt(x4, v4)
 	
 		x = x + (dt/6.0)*(v1 + 2*v2 + 2*v3 + v4)
 		v = v + (dt/6.0)*(a1 + 2*a2 + 2*a3 + a4)
@@ -94,7 +94,7 @@ def rk4(dfdt, x, v, ec, c = {'dt': 1./40}):
 			dt *= e(sympy.sqrt(tol/(dt*sympy.Abs(v2.norm()-v1.norm()))), c)
 	return to, xo, vo
 
-def spring(x, v, dt):
+def spring(x, v):
 	stiffness = 1
 	damping = -0.005
 	return -stiffness*x + damping*v

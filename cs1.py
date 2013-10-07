@@ -28,7 +28,7 @@ if __name__ == "__main__":
 	print "time without drag:",  tf
 
 	# drag equation
-	dfdt = lambda x, v, dt: qd.e(M([0, s("g")]) + (s("-1/2*p*Cd*A")*v.norm()**2*v.normalized()), c)
+	dfdt = lambda x, v: qd.e(M([0, s("g")]) + (s("-1/2*p*Cd*A")*v.norm()**2*v.normalized()), c)
 	v = M(["vx", "vy"])
 	print "acceleration:", qd.e(M([0, s("g")]) + (s("-1/2*p*Cd*A")*v.norm()**2*v.normalized()), c)
 	# initial velocity matrix
