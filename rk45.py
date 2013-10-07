@@ -1,5 +1,10 @@
+import sympy
+
+e = lambda x, c: x.subs(c.items()).evalf()
+
 def rk4(a, x, v, ec, c = {'dt': 1./40}):
 	dt = c['dt']
+	tol = c['tol']
 	xo = []
 	to = []
 	vo = []
@@ -26,6 +31,7 @@ def rk4(a, x, v, ec, c = {'dt': 1./40}):
 		x = x + (dt/6.0)*(v1 + 2*v2 + 2*v3 + v4)
 		v = v + (dt/6.0)*(a1 + 2*a2 + 2*a3 + a4)
 		t += dt
+		dt *= e(sympy.sqrt(tol/(dt*sympy.Abs(v2.norm()-v1.norm()))), c)
 	return to, xo, vo
 
 def spring(x, v, dt):
