@@ -1,29 +1,42 @@
+#### Case Study 1
+#### Ian Daniher
+#### 10/07/13
 
-drag:
-1.0 Matrix([[64.7623873776530], [-98.1955485030447]])
-1.0 Matrix([[90.0659521764927], [-53.1951163612238]])
-0.421696503429 Matrix([[74.5622475714301], [-72.1249538524623]])
-0.421696503429 Matrix([[95.8898913994736], [-49.0939958838664]])
-0.177827941004 Matrix([[78.0589924010584], [-58.9359161192091]])
-0.177827941004 Matrix([[98.1777480373775], [-40.5932860316692]])
-0.0749894209332 Matrix([[79.7169886299597], [-55.0895654587623]])
-0.0749894209332 Matrix([[99.5861902348535], [-38.3311933349031]])
-0.0316227766017 Matrix([[80.2740130069344], [-52.4970764911337]])
-0.0316227766017 Matrix([[99.9582344749227], [-36.1886853815443]])
+## Numerical Integration
+
+The ubiquitous use of computers when going about daily engineering tasks is something we take for granted. Everytime we make use of a SPICE or Solidworks, complicated algorithms behind the scenes allow us to evaluate complicated systems. How exactly does this math work? In this case study, I sought to explore algorithms for numerical integration - given a first order system, advancing it forward in time, with specified initial conditions. 
+
+Euler's method is the simplest method of numerical integration, sequentially evaluating a function of a derivative to calculate a local slope, and advancing the previous state forward along a tangent line. More advanced methods are capable of carrying this out more efficiently and with less error.
 
 
-no drag:
+## Numerical Integrators
 
-# normalized position after 8.65 seconds
+For this case study, I implemented two numerical integration algorithms; Euler's method (described above,) and Heun's method (described below.) In addition, I developed a partial implementation of RK4, based off of resources from the internet.
 
-1.0 123.866290512845
-1.0 123.866290512845
-0.421696503429 130.072918178974
-0.421696503429 130.072918178974
-0.177827941004 131.396624433280
-0.177827941004 131.396624433280
-0.0749894209332 132.741632932109
-0.0749894209332 132.741632932109
-0.0316227766017 132.870812912534
-0.0316227766017 132.870812912534
-0.0 133.183887417192
+Euler's method is a simple approach to estimating the integral of a function over a given timespan. It calculates a left-hand rectangle for a given timestep, resulting in comparitively high error, but with only one step.
+
+Heun's method is an extension of Euler's method and averages the right and left-hand
+
+
+
+
+## A simple Example
+
+
+### no drag: error vs. timestep
+– a graph which compares the error in solving the problem with-
+out drag as a function of fixed step-size ∆t for each method
+
+### w/ drag: error vs. timestep
+– a graph which compares the range with drag as a function of
+fixed step-size ∆t for each method.
+
+### computational complexity
+– a graph which compares the computation time as a function of
+step-size ∆t for each method.
+
+### adaptive timestepping and advanced methods
+– a graph which compares the distribution of step-sizes as a func-
+tion of the error tolerance for both your method and ode45.
+
+![Range vs. Reynolds Number](/cs1/cs3f1.png "Range vs. Reynolds")
