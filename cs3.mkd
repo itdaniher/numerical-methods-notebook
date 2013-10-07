@@ -17,4 +17,6 @@ As a part of this lab, I modified my existing implementations of forward and mod
 The function 'ec' is of the form: ```lambda t, x, v: x[1] > 0```, such that the inequality evaluates to 'True' while the 'y' value is greater than zero. Other expressions may include ```t < tn```, such that tn is the intended ending time.
 
 
+This modification allows us to sweep reynolds numbers (```p```) and find range via determining the final x position with a 'y' value of 0. Setting an absolute tolerance allows our numerical integrator to estimate the range within a given precision.
+
 ![Range vs. Reynolds Number](/cs3/cs3f1.png "Range vs. Reynolds")
