@@ -1,0 +1,20 @@
+#### Case Study 3
+#### Ian Daniher
+#### 10/07/13
+
+## Ending Conditions for Numerical Integrators
+
+As a part of this lab, I modified my existing implementations of forward and modified euler and RKF45 to accept an anonymous function of time, variable, and the derivative of the variable with respect to time to specify an ending condition.
+
+> def meuler(dfdt, x0, v0, ec, c):
+
+...
+
+> while ec(t, x, v):
+
+...
+
+The function 'ec' is of the form: ```lambda t, x, v: x[1] > 0```, such that the inequality evaluates to 'True' while the 'y' value is greater than zero. Other expressions may include ```t < tn```, such that tn is the intended ending time.
+
+
+![Range vs. Reynolds Number](/cs3/cs3f1.png "Range vs. Reynolds")
