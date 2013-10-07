@@ -33,3 +33,11 @@ if __name__ == "__main__":
 	plt.xlabel("Reynolds Number")
 	plt.ylabel("Range (m)")
 	plt.show()
+
+#v'' + 2xv' − x2**v = x**2 , v(0) = 1, v(1) = 0,
+
+#dvdx = u
+
+#dudx = x**2+x*v-2*x*u
+
+
