@@ -50,13 +50,12 @@ def heun(dfdt, x, v, ec, c):
 		vi = dfdt(x,v)*dt
 		vf = dfdt(x,vi)*dt
 		v += 0.5*(vi+vf)
-		# calculate error constant
-		er = e(2.0*(vf-vi)/dt**2, c)
 		# evaluate
 		x += v*dt
 		# increment time
 		t += dt
 		if tol:
+			# modify timestep
 			dt *= e(sympy.sqrt(tol/(dt*sympy.Abs(vi.norm()-v.norm()))), c)
 	return to, xo, vo
 
