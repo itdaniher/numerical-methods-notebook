@@ -2,16 +2,26 @@
 from cs3 import *
 from sympy.core.function import AppliedUndef
 
+N = 10
+
+#{"dvdx" = V(i+1) - V(i-1)
+
+# v'' + 2*x*v' - x**2*v = x**2
+# f'' + p(x)*f' + q(x)*f = r(x)
+# r(i) = x[i]**2
+# p(i) = 2*x[i]
+# q(i) = -(x[i])**2
+
 # formulation of differential equation using finite difference analysis
-f = s("r(i)*dx**2 - (1-p(i)*dx/2)*v(i-1) -(-2+q(i)*dx**2)*v(i) - (1+p(i)*dx/2)*v(i+1)")
+# algebra by john geddes
+f = s("-r(i)*dx**2 + (1-p(i)*dx/2)*v(i-1) + (-2+q(i)*dx**2)*v(i) + (1+p(i)*dx/2)*v(i+1)")
 
-print M(f)
+# build vector of N values on interval (0, 1)
+xs = np.linspace(0, 1, N+2)[1:-1]
 
-# build vector of x values on interval (0, 1)
-xs = np.linspace(0,1, 52)[1:-1]
+f = f.subs({s("dx"): np.mean(np.diff(xs))})
+print f
 
-dx = np.mean(np.diff(xs))
-print dx
 
 funcs = set(map(lambda f: f.func, f.atoms(AppliedUndef)))
 locals().update(dict(zip(map(str, funcs), funcs)))
