@@ -1,6 +1,7 @@
 import numpy as np
 import sympy
-
+import sys
+sys.displayhook = sympy.pprint
 import integrators as qd
 
 from matplotlib import pyplot as plt
@@ -9,6 +10,7 @@ from sympy.abc import t
 from sympy import sympify as s
 from sympy import Matrix as M
 
+e = lambda x, c: x.subs(c.items()).evalf()
 
 if __name__ == "__main__":
 	# constant terms
