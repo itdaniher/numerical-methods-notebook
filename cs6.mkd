@@ -1,0 +1,23 @@
+x $\in$ [0,1]
+
+    d2udx2-3u-a*u**3 = x**2
+u(0) = 0
+u(1) = 0
+
+apply finite difference:
+
+    u_{i+1}-2*u_{i} + u_{i+1}
+
+    -3*u_{i}*dx**2-a*u_{i}**3*a*dx**2=xi**2*dx**2
+
+    f_{1} = u_{2}-2*u_{1} + u_{0} - 3_u_{1}*dx**2 - a*dx**2*u_{1}**3-x_{1}**2*dx**2
+	f_{n} = u_{n+1} - 2*u_{n} + u_{n-1} - 3*u_{n}*dx**2-a*dx**2*u_{n}**3-x_{n}**2*dx**2
+
+
+tridiagonal b/c of central difference approximation to the derivative
+
+tri-diagonal jacobian
+
+    set a=0; solve for u_{1},u_{2}...u_{n}; compare and validate against exact numerical solution
+
+increase a by a small amount, use a=0 as an initial guess, and iterate
