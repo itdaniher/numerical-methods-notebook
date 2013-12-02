@@ -27,16 +27,25 @@ Heun's method is an extension of Euler's method and averages the right and left-
 – a graph which compares the error in solving the problem with-
 out drag as a function of fixed step-size ∆t for each method
 
+![Heun & Euler - Varying Timestep](/cs1/cs1f1.png "Range")
+
 ### w/ drag: error vs. timestep
 – a graph which compares the range with drag as a function of
 fixed step-size ∆t for each method.
+
+![Heun & Euler - Varying Timestep + Drag](/cs1/cs1f2.png "Range")
+
+
+![Heun & Euler - Error](/cs1/cs1f3.png "Error")
+
+![Heun & Euler - Error](/cs1/cs1f4.png "Error")
 
 ### computational complexity
 – a graph which compares the computation time as a function of
 step-size ∆t for each method.
 
+
 ### adaptive timestepping and advanced methods
 – a graph which compares the distribution of step-sizes as a func-
 tion of the error tolerance for both your method and ode45.
 
-![Range vs. Reynolds Number](/cs1/cs3f1.png "Range vs. Reynolds")
